@@ -15,8 +15,6 @@ const pool = new Pool({
 });
 
 app.get("/heroes", async (req, res) => {
-
-    const {photo} = req.query;
     
   try {
     const result = await pool.query("SELECT * FROM heroes");

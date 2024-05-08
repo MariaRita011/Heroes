@@ -30,7 +30,7 @@ Além disso, a API possui funcionalidades para as batalhas:
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/MariaRita011/HarryPotter.git
+[git clone https://github.com/MariaRita011/HarryPotter.git](https://github.com/MariaRita011/Heroes.git)
 ```
 
 ### 2. Instalar as dependências

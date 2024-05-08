@@ -80,6 +80,42 @@ app.get("/batalhasheroi", async (req, res) => {
   }
 });
 
+app.get("/batalhasheroi/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+
+    const result = await pool.query(`
+      SELECT 
+        batalhas.id, 
+        batalhas.hero1ID, 
+        hero1.name as nome_heroi1, 
+        batalhas.hero2ID, 
+        hero2.name as nome_heroi2, 
+        batalhas.winner, 
+        heroes_winner.name as nome_heroi_vencedor 
+      FROM 
+        batalhas 
+        INNER JOIN heroes hero1 ON batalhas.hero1ID = hero1.id
+        INNER JOIN heroes hero2 ON batalhas.hero2ID = hero2.id
+        LEFT JOIN heroes heroes_winner ON batalhas.winner = heroes_winner.id::text
+      WHERE 
+        hero1.name LIKE '%${name}%' OR hero2.name LIKE '%${name}%'
+    `);
+
+    if (result.rowCount == 0) {
+      res.status(404).send({ mensagem: `Nenhuma batalha encontrada para o herói ${name}.` });
+    } else {
+      res.json({
+        total: result.rowCount,
+        batalhas: result.rows,
+      });
+    }
+  } catch (error) {
+    console.error("Erro ao buscar batalhas por nome de herói:", error);
+    res.status(500).send("Erro ao buscar batalhas por nome de herói.");
+  }
+});
+
 app.post("/heroes", async (req, res) => {
   try {
     const { name, strength, healthPoints, carSpeed } = req.body;
@@ -125,6 +161,26 @@ app.put("/heroes/:id", async (req, res) => {
   } catch (error) {
     console.error("Erro ao atualizar herói:", error);
     res.status(500).send("Erro ao atualizar herói");
+  }
+});
+
+app.get("/heroes/name/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+
+    const result = await pool.query(
+      `SELECT * FROM heroes WHERE name LIKE '%${name}%'`
+    );
+    if (result.rowCount === 0) {
+      res
+        .status(404)
+        .send({ mensagem: `Herói não encontrado! Tente novamente.` });
+    } else {
+      res.json(result.rows[0]);
+    }
+  } catch (error) {
+    console.error("Erro ao obter herói por nome.", error);
+    res.status(500).send("Erro ao obter herói por nome.");
   }
 });
 

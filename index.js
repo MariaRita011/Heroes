@@ -31,6 +31,55 @@ app.get("/heroes", async (req, res) => {
   }
 });
 
+app.get("/batalhas", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM batalhas");
+    if (result.rowCount == 0) {
+      res.status(201).send({ Aviso: "Nenhuma batalha cadastrado!" });
+    } else {
+      res.json({
+        total: result.rowCount,
+        heroes: result.rows,
+      });
+    }
+  } catch (error) {
+    console.error("Erro ao obter batalhas cadastrados:", error);
+    res.status(500).send("Erro ao obter batalhas cadastrados");
+  }
+});
+
+app.get("/batalhasheroi", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        batalhas.id, 
+        batalhas.hero1ID, 
+        hero1.name as nome_heroi1, 
+        batalhas.hero2ID, 
+        hero2.name as nome_heroi2, 
+        batalhas.winner, 
+        heroes_winner.name as nome_heroi_vencedor 
+      FROM 
+        batalhas 
+        INNER JOIN heroes hero1 ON batalhas.hero1ID = hero1.id
+        INNER JOIN heroes hero2 ON batalhas.hero2ID = hero2.id
+        LEFT JOIN heroes heroes_winner ON batalhas.winner = heroes_winner.id::text
+    `);
+    //::text foi adicionado pois estava tentando comparar uma coluna de tipo VARCHAR com um tipo INTEGER
+    if (result.rowCount == 0) {
+      res.status(201).send({ Aviso: "Nenhuma batalha cadastrada!" });
+    } else {
+      res.json({
+        total: result.rowCount,
+        heroes: result.rows,
+      });
+    }
+  } catch (error) {
+    console.error("Erro ao obter batalhas cadastrados:", error);
+    res.status(500).send("Erro ao obter batalhas cadastrados");
+  }
+});
+
 app.post("/heroes", async (req, res) => {
   try {
     const { name, strength, healthPoints, carSpeed } = req.body;

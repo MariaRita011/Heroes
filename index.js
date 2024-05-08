@@ -158,7 +158,11 @@ app.get("/heroes/:hero1id/:hero2id", async (req, res) => {
 
     const winner = await ganhador(hero1, hero2);
 
-    res.json({ winner: winner });
+    await pool.query('INSERT INTO batalhas (hero1ID, hero2ID, winner) VALUES ($1, $2, $3)', [hero1id, hero2id, winner.id]);
+
+    res.json({ 
+        messagem: `O ganhador é ${winner.name}`,
+        winner: winner });
   } catch (error) {
     console.error("Erro ao batalhar", error);
     res.status(500).send("Erro ao batalhar");

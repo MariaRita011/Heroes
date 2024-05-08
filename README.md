@@ -17,7 +17,8 @@ A API possui as seguintes funcionalidades para heróis:
 
 Além disso, a API possui funcionalidades para as batalhas:
 
-* Listar todas as batalhas cadastradas (com ids do herói 1, herói 2, id do ganhador e nome do ganhador.
+* Listar todas as batalhas cadastradas;
+* Listar todas as batalhas cadastradas (com ids do herói 1, herói 2, id do ganhador e nome do ganhador).
 
 ## Tecnologias Utilizadas
 
